@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/evangwt/go-vncproxy"
+	"github.com/gamoutatsumi/go-vncproxy"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/websocket"
@@ -28,8 +28,8 @@ func NewVNCProxy() *vncproxy.Proxy {
 		LogLevel: vncproxy.DebugLevel,
 		// Logger: customerLogger,	// inject a custom logger
 		// DialTimeout: 10 * time.Second, // customer DialTimeout
-		TokenHandler: func(r *http.Request) (addr string, err error) {
-			return ":5901", nil
+		TokenHandler: func(r *http.Request) (addr, mode string, err error) {
+			return ":5901", "tcp", nil
 		},
 	})
 }
