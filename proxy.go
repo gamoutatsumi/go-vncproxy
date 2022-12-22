@@ -9,7 +9,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-type TokenHandler func(r *http.Request) (addr string, err error)
+type TokenHandler func(r *http.Request) (addr, mode string, err error)
 
 // Config represents vnc proxy config
 type Config struct {
@@ -33,8 +33,8 @@ type Proxy struct {
 // If token handler is nil, vnc backend address will always be :5901
 func New(conf *Config) *Proxy {
 	if conf.TokenHandler == nil {
-		conf.TokenHandler = func(r *http.Request) (addr string, err error) {
-			return ":5901", nil
+		conf.TokenHandler = func(r *http.Request) (addr, mode string, err error) {
+			return ":5901", "tcp", nil
 		}
 	}
 
@@ -57,13 +57,13 @@ func (p *Proxy) ServeWS(ws *websocket.Conn) {
 	p.logger.Debugf("request url: %v", r.URL)
 
 	// get vnc backend server addr
-	addr, err := p.tokenHandler(r)
+	addr, mode, err := p.tokenHandler(r)
 	if err != nil {
 		p.logger.Infof("get vnc backend failed: %v", err)
 		return
 	}
 
-	peer, err := NewPeer(ws, addr, p.dialTimeout)
+	peer, err := NewPeer(ws, mode, addr, p.dialTimeout)
 	if err != nil {
 		p.logger.Infof("new vnc peer failed: %v", err)
 		return
