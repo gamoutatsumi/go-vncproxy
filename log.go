@@ -33,9 +33,9 @@ func NewLogger(level uint32, instance Logger) *logger {
 func (l *logger) print(level string, msg ...interface{}) {
 	if l.logger != nil {
 		if level == "debug" {
-			l.logger.Debugf("[vncproxy] %v", fmt.Sprint(msg...))
+			l.logger.Debugf("%v", fmt.Sprint(msg...))
 		} else {
-			l.logger.Infof("[vncproxy] %v", fmt.Sprint(msg...))
+			l.logger.Infof("%v", fmt.Sprint(msg...))
 		}
 	} else {
 		log.Printf("[vncproxy][%v] %v", level, fmt.Sprint(msg...))
