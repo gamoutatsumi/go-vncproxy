@@ -43,14 +43,16 @@ func NewPeer(ws *websocket.Conn, mode, addr string, dialTimeout time.Duration) (
 		return nil, errors.Wrap(err, "cannot connect to vnc backend")
 	}
 
-	err = c.(*net.TCPConn).SetKeepAlive(true)
-	if err != nil {
-		return nil, errors.Wrap(err, "enable vnc backend connection keepalive failed")
-	}
+	if _, ok := c.(*net.TCPConn); ok {
+		err = c.(*net.TCPConn).SetKeepAlive(true)
+		if err != nil {
+			return nil, errors.Wrap(err, "enable vnc backend connection keepalive failed")
+		}
 
-	err = c.(*net.TCPConn).SetKeepAlivePeriod(30 * time.Second)
-	if err != nil {
-		return nil, errors.Wrap(err, "set vnc backend connection keepalive period failed")
+		err = c.(*net.TCPConn).SetKeepAlivePeriod(30 * time.Second)
+		if err != nil {
+			return nil, errors.Wrap(err, "set vnc backend connection keepalive period failed")
+		}
 	}
 
 	return &peer{
